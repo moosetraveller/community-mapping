@@ -1,21 +1,24 @@
-const geoJsonSql = 'SELECT * FROM food2018_v3_ll'
-let geoJsonUrl = `https://ederd.cartodb.com/api/v2/sql?format=geojson&q=${geoJsonSql}`;
+// const geoJsonSql = 'SELECT * FROM food2018_v3_ll';
+// let selectUrl = `https://ederd.cartodb.com/api/v2/sql?format=geojson&q=${geoJsonSql}`;
+
+const selectSql = 'SELECT * FROM markers';
+const selectUrl = `https://geomo.carto.com/api/v2/sql?format=geojson&q=${selectSql}`;
 
 let osm = L.tileLayer.provider('OpenStreetMap.Mapnik');
 let cartodb = L.tileLayer.provider('CartoDB.Voyager');
 
+let drawingLayer = new L.FeatureGroup();
+
 let map = L.map('map', {
   center: [44.8825, -65.163889],
   zoom: 10,
-  layers: [osm]
+  layers: [osm, drawingLayer]
 });
 
 let baseLayers = {
   'Open Street Map': osm,
   'CartoDB Voyager': cartodb
 };
-
-let drawingLayer = new L.FeatureGroup();
 
 let layers = {
   'Drawing Layer': drawingLayer
@@ -50,14 +53,13 @@ map.on(L.Draw.Event.CREATED, e => {
 //   editor.startUpdateFeature(e.layer);
 // });
 
-$.getJSON(geoJsonUrl, data => {
+$.getJSON(selectUrl, data => {
   
   geoJsonLayer = L.geoJson(data, {
     onEachFeature: (feature, layer) => {
       layer.on('click', () => editor.startUpdateFeature(layer));
-      layer.bindTooltip(feature.properties.asset_name);
+      layer.bindTooltip(feature.properties.name);
     },
-    filter: (feature, layer) => !!feature.properties.asset_name,
     pointToLayer: (feature, latLong) => {
       return L.marker(latLong);
     }

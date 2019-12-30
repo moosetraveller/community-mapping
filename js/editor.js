@@ -1,3 +1,6 @@
+// don't do this, only for test purpose -> find another solution (hide api key in production)
+const apiKey = 'HvMRWvk-WCVhCmyDpNzEiw';
+
 class Editor {
 
     constructor(modalId, drawingLayer) {
@@ -72,30 +75,77 @@ class Editor {
 
     }
 
+    getSelectedLayerData() {
+        const lat = this.selectedLayer._latlng.lat;
+        const lng = this.selectedLayer._latlng.lng;
+        return {
+            lat: lat,
+            lng: lng,
+            geometryGeneratorFn: `ST_GeomFromText('POINT(${lng} ${lat})', 4326)`,
+            id: this.selectedLayer.feature.properties.cartodb_id,
+            name: this.selectedLayer.feature.properties.name,
+            description: this.selectedLayer.feature.properties.description,
+            category: this.selectedLayer.feature.properties.category,
+            contributor: this.selectedLayer.feature.properties.contributor
+        }
+    }
+
     save() {
 
         this.updateLayer(this.selectedLayer);
 
         $(`#${this.modalId}`).modal('hide');
 
+        const d = this.getSelectedLayerData();
+        let url = ""
+
         if (this.mode == this.CREATE_MODE) {
+
             this.drawingLayer.addLayer(this.selectedLayer);
             this.selectedLayer.on('click', e => this.startUpdateFeature(e.target));
-            // TODO create layer on server
+
+            const sql = `INSERT INTO markers (the_geom, name, description, category, contributor) ` +
+                `VALUES (${d.geometryGeneratorFn}, '${d.name}', '${d.description}', '${d.category}', '${d.contributor}')`;
+
+            url = `https://geomo.carto.com/api/v2/sql?api_key=${apiKey}&q=${sql}`;
+
         }
         else {
-            // TODO update layer on server
+
+            const sql = `UPDATE markers SET the_geom = ${d.geometryGeneratorFn}, name = '${d.name}', description = '${d.description}', ` +
+                `category = '${d.category}', contributor = '${d.contributor}' WHERE cartodb_id = ${d.id}`;
+
+            url = `https://geomo.carto.com/api/v2/sql?api_key=${apiKey}&q=${sql}`;
+
         }
+
+        $.ajax({
+            method: 'GET',
+            url: url
+        }).done(function (msg) {
+            console.log('Created/Modified');
+            console.log(msg);
+        });
+
         this.selectedLayer.bindTooltip(this.selectedLayer.feature.properties.name);
 
     }
 
     delete() {
-        
+
         this.drawingLayer.removeLayer(this.selectedLayer);
-        this.alternativeDrawingLayer.removeLayer(this.selectedLayer); 
-        
-        // TODO delete layer on server
+        this.alternativeDrawingLayer.removeLayer(this.selectedLayer);
+
+        const d = this.getSelectedLayerData();
+        const sql = `DELETE FROM markers WHERE cartodb_id = ${d.id}`;
+        const url = `https://geomo.carto.com/api/v2/sql?api_key=${apiKey}&q=${sql}`;
+        $.ajax({
+            method: 'GET',
+            url: url
+        }).done(function (msg) {
+            console.log('Deleted');
+            console.log(msg);
+        });
 
         $(`#${this.modalId}`).modal('hide');
 
