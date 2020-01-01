@@ -9,21 +9,28 @@
     <meta name="description" content="Web Map to map Community ">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <link rel="stylesheet" href="./css/fontawesome-free-5.12.0-web/css/all.min.css">
+
     <link rel="stylesheet" href="./js/leaflet-1.6.0/leaflet.css">
-    <!-- <link rel="stylesheet" href="./js/leaflet-geoman-2.3.0/leaflet-geoman.css"> -->
     <link rel="stylesheet" href="./js/leaflet-draw-1.0.4/leaflet.draw-src.css">
+    <link rel="stylesheet" href="./js/leaflet-locatecontrol-0.68.0/L.Control.Locate.css">
+    <link rel="stylesheet" href="./js/leaflet-control-geocoder-1.10.0/Control.Geocoder.css">
     <link rel="stylesheet" href="./js/bootstrap-4.4.1/css/bootstrap.css">
     <link rel="stylesheet" href="./css/yeti/bootstrap.css">
+    <link rel="stylesheet" href="./css/toastr.css">
 
     <link rel="stylesheet" href="./css/editor.css">
 
     <script src="./js/leaflet-1.6.0/leaflet-src.js"></script>
     <script src="./js/leaflet-providers-1.9.0/leaflet-providers.js"></script>
-    <!-- <script src="./js/leaflet-geoman-2.3.0/leaflet-geoman.min.js"></script> -->
     <script src="./js/leaflet-draw-1.0.4/leaflet.draw-src.js"></script>
+    <script src="./js/leaflet-locatecontrol-0.68.0/L.Control.Locate.min.js"></script>
+    <script src="./js/leaflet-control-geocoder-1.10.0/Control.Geocoder.js"></script>
     <script src="./js/jquery-3.4.1/jquery-3.4.1.js"></script>
     <script src="./js/bootstrap-4.4.1/js/bootstrap.js"></script>
+    <script src="./js/toastr.js"></script>
 
+    <script src="./js/config.js"></script>
     <script src="./js/editor.js"></script>
 
 </head>
@@ -32,7 +39,7 @@
 
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editModalLabel">Edit Marker</h5>
@@ -42,21 +49,47 @@
                 </div>
                 <div class="modal-body">
                     <form id="editFields">
-                        <div class="form-group">
-                            <label for="recipient-name" class="col-form-label">Category</label>
-                            <input type="text" class="form-control" id="category">
-                        </div>
-                        <div class="form-group">
-                            <label for="recipient-name" class="col-form-label">Name</label>
-                            <input type="text" class="form-control" id="name">
-                        </div>
-                        <div class="form-group">
-                            <label for="message-text" class="col-form-label">Description</label>
-                            <textarea class="form-control" id="description"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="recipient-name" class="col-form-label">Contributor</label>
-                            <input type="text" class="form-control" id="contributor">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="name" class="col-form-label">Name</label>
+                                        <input type="text" class="form-control" id="name">
+                                    </div>
+                                </div>
+                                <div class="col-lg">
+                                    <div class="form-group">
+                                        <label for="category" class="col-form-label">Category</label>
+                                        <select class="form-control" id="category">
+                                            <option value="" disabled>-- Please choose an option --</option>
+                                            <option value="solution">Solution</option>
+                                            <option value="problem">Problem/Issue</option>
+                                            <option value="currentEvent">Current Event</option>
+                                            <option value="pastEvent">Past Event</option>
+                                            <option value="organizationOrAssociation">Organizations/Association</option>
+                                            <option value="news">In the News</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="description" class="col-form-label">Description</label>
+                                        <textarea class="form-control" id="description"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="contributor" class="col-form-label">Contributor</label>
+                                        <input type="text" class="form-control" id="contributor">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>

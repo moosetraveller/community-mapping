@@ -4,24 +4,26 @@
 const selectSql = 'SELECT * FROM markers';
 const selectUrl = `https://geomo.carto.com/api/v2/sql?format=geojson&q=${selectSql}`;
 
-let osm = L.tileLayer.provider('OpenStreetMap.Mapnik');
-let cartodb = L.tileLayer.provider('CartoDB.Voyager');
+let cartodb = L.tileLayer.provider('CartoDB.Positron');
+// let osm = L.tileLayer.provider('OpenStreetMap.Mapnik');
+// let cartodb = L.tileLayer.provider('CartoDB.Voyager');
 
 let drawingLayer = new L.FeatureGroup();
 
 let map = L.map('map', {
   center: [44.8825, -65.163889],
   zoom: 10,
-  layers: [osm, drawingLayer]
+  layers: [cartodb, drawingLayer]
 });
 
 let baseLayers = {
-  'Open Street Map': osm,
-  'CartoDB Voyager': cartodb
+  'Basemap': cartodb,
+  // 'Open Street Map': osm,
+  // 'CartoDB Voyager': cartodb
 };
 
 let layers = {
-  'Drawing Layer': drawingLayer
+  'Markers': drawingLayer
 };
 
 let layerProperties = {
@@ -42,6 +44,11 @@ map.addControl(new L.Control.Draw({
     circlemarker: false
   }
 }));
+L.control.locate({
+  flyTo: true,
+  icon: 'fa fa-location-arrow fa-xs'
+}).addTo(map);
+L.Control.geocoder().addTo(map);
 
 const editor = new Editor('editModal', drawingLayer);
 
@@ -54,17 +61,20 @@ map.on(L.Draw.Event.CREATED, e => {
 // });
 
 $.getJSON(selectUrl, data => {
-  
+
   geoJsonLayer = L.geoJson(data, {
     onEachFeature: (feature, layer) => {
       layer.on('click', () => editor.startUpdateFeature(layer));
       layer.bindTooltip(feature.properties.name);
     },
     pointToLayer: (feature, latLong) => {
+      if (markerIcons[feature.properties.category] != undefined) {
+        return L.marker(latLong, { icon: markerIcons[feature.properties.category] });
+      }
       return L.marker(latLong);
     }
   }).addTo(drawingLayer);
-  
+
   editor.setAlternativeDrawingLayer(geoJsonLayer);
 
 });

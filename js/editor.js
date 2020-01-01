@@ -104,10 +104,27 @@ class Editor {
             this.drawingLayer.addLayer(this.selectedLayer);
             this.selectedLayer.on('click', e => this.startUpdateFeature(e.target));
 
-            const sql = `INSERT INTO markers (the_geom, name, description, category, contributor) ` +
+            let sql = `INSERT INTO markers (the_geom, name, description, category, contributor) ` +
                 `VALUES (${d.geometryGeneratorFn}, '${d.name}', '${d.description}', '${d.category}', '${d.contributor}')`;
 
-            url = `https://geomo.carto.com/api/v2/sql?api_key=${apiKey}&q=${sql}`;
+            $.ajax({
+                method: 'GET',
+                url: `https://geomo.carto.com/api/v2/sql?api_key=${apiKey}&q=${sql}`
+            }).done((response) => {
+                
+                toastr.success(`Marker ${d.name} successfully created.`, `Marker ${d.name}`);
+
+                // get cartodb_id from latest created marker at given position
+                sql = `SELECT * FROM markers WHERE the_geom = ${d.geometryGeneratorFn} ORDER BY cartodb_id DESC`;
+                $.ajax({
+                    method: 'GET',
+                    url: `https://geomo.carto.com/api/v2/sql?format=geojson&q=${sql}`
+                }).done((response) => {
+                    const id = response.features[0].properties.cartodb_id;
+                    this.selectedLayer.feature.properties.cartodb_id = id;
+                });
+
+            });
 
         }
         else {
@@ -115,17 +132,14 @@ class Editor {
             const sql = `UPDATE markers SET the_geom = ${d.geometryGeneratorFn}, name = '${d.name}', description = '${d.description}', ` +
                 `category = '${d.category}', contributor = '${d.contributor}' WHERE cartodb_id = ${d.id}`;
 
-            url = `https://geomo.carto.com/api/v2/sql?api_key=${apiKey}&q=${sql}`;
+            $.ajax({
+                method: 'GET',
+                url: `https://geomo.carto.com/api/v2/sql?api_key=${apiKey}&q=${sql}`
+            }).done((response) => {
+                toastr.success(`Marker ${d.name} successfully updated.`, `Marker ${d.name}`);
+            });
 
         }
-
-        $.ajax({
-            method: 'GET',
-            url: url
-        }).done(function (msg) {
-            console.log('Created/Modified');
-            console.log(msg);
-        });
 
         this.selectedLayer.bindTooltip(this.selectedLayer.feature.properties.name);
 
@@ -142,9 +156,8 @@ class Editor {
         $.ajax({
             method: 'GET',
             url: url
-        }).done(function (msg) {
-            console.log('Deleted');
-            console.log(msg);
+        }).done((response) => {
+            toastr.success(`Marker ${d.name} successfully deleted.`, `Marker ${d.name}`);
         });
 
         $(`#${this.modalId}`).modal('hide');
