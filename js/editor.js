@@ -61,18 +61,25 @@ class Editor {
         for (const key of Object.keys(this.selectedLayer.feature.properties)) {
             const input = $(`#${this.modalId} #editFields #${key}`);
             if (input.length > 0) {
-                input.val(this.selectedLayer.feature.properties[key]);
+                let value = this.selectedLayer.feature.properties[key];
+                if (key == 'date') {
+                    value = this._getDate(new Date(value));
+                }
+                input.val(value);
             }
         }
 
     }
 
-    updateLayer(layer) {
-
+    _updateLayer(layer) {
         $(`#${this.modalId} #editFields .form-control`).each((_, input) => {
             layer.feature.properties[input.id] = input.value;
         });
+    }
 
+    _getDate(date) {
+        // https://stackoverflow.com/a/31934378/42659
+        return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toJSON().slice(0, 10);
     }
 
     _getSqlPreparedData(layer) {
@@ -86,18 +93,22 @@ class Editor {
             name: layer.feature.properties.name,
             description: layer.feature.properties.description,
             category: layer.feature.properties.category,
-            contributor: layer.feature.properties.contributor
+            contributor: layer.feature.properties.contributor,
+            date: layer.feature.properties.date
         };
         // escape single quotes
         data.name = data.name.replace('\'', '\'\'');
         data.description = data.description.replace('\'', '\'\'');
         data.contributor = data.contributor.replace('\'', '\'\'');
+        if (data.date == undefined) {
+            data.date = this._getDate(new Date());
+        }
         return data;
     }
 
     save() {
 
-        this.updateLayer(this.selectedLayer);
+        this._updateLayer(this.selectedLayer);
 
         $(`#${this.modalId}`).modal('hide');
 
@@ -110,8 +121,8 @@ class Editor {
             this.drawingLayer.addLayer(this.selectedLayer);
             this.selectedLayer.on('click', e => this.startUpdateFeature(e.target));
 
-            let sql = `INSERT INTO markers (the_geom, name, description, category, contributor) ` +
-                `VALUES (${d.geometryGeneratorFn}, '${d.name}', '${d.description}', '${d.category}', '${d.contributor}')`;
+            let sql = `INSERT INTO markers (the_geom, name, description, category, contributor, date) ` +
+                `VALUES (${d.geometryGeneratorFn}, '${d.name}', '${d.description}', '${d.category}', '${d.contributor}', TO_DATE('${d.date}', 'YYYY-MM-DD'))`;
 
             $.ajax({
                 method: 'GET',
@@ -136,7 +147,7 @@ class Editor {
         else {
 
             const sql = `UPDATE markers SET the_geom = ${d.geometryGeneratorFn}, name = '${d.name}', description = '${d.description}', ` +
-                `category = '${d.category}', contributor = '${d.contributor}' WHERE cartodb_id = ${d.id}`;
+                `category = '${d.category}', contributor = '${d.contributor}', date = TO_DATE('${d.date}', 'YYYY-MM-DD') WHERE cartodb_id = ${d.id}`;
 
             $.ajax({
                 method: 'GET',

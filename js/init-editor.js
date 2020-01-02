@@ -7,7 +7,9 @@ const selectUrl = `https://geomo.carto.com/api/v2/sql?format=geojson&q=${selectS
 let cartodb = L.tileLayer.provider('CartoDB.Positron');
 
 // let drawingLayer = new L.FeatureGroup();
-let clusters = L.markerClusterGroup({});
+let clusters = L.markerClusterGroup({
+  showCoverageOnHover: false
+});
 // https://support.flaticon.com/hc/en-us/articles/207248209-How-I-must-insert-the-attribution-
 clusters.getAttribution = () => 'Icons made by <a href="https://www.flaticon.com/authors/vectors-market" title="Vectors Market">Vectors Market</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>';
 
