@@ -1,7 +1,7 @@
 class Editor {
 
     constructor(modalId, drawingLayer, apiKey, apiUrl) {
-        
+
         this.modalId = modalId;
         this.drawingLayer = drawingLayer;
         this.mode = 'create';
@@ -18,7 +18,7 @@ class Editor {
         this.alternativeDrawingLayer = alternativeDrawingLayer;
     }
 
-    openEditModal() {
+    _openEditModal() {
         $(`#${this.modalId} .btn-danger`).css('display', this.mode == this.UPDATE_MODE ? 'block' : 'none')
         this._updateModal();
         $(`#${this.modalId}`).modal('show');
@@ -38,7 +38,7 @@ class Editor {
         this.mode = this.CREATE_MODE;
         this.selectedLayer = layer;
 
-        this.openEditModal();
+        this._openEditModal();
 
     }
 
@@ -47,7 +47,7 @@ class Editor {
         this.mode = this.UPDATE_MODE;
         this.selectedLayer = layer;
 
-        this.openEditModal();
+        this._openEditModal();
 
     }
 
