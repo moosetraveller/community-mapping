@@ -1,6 +1,9 @@
 // const geoJsonSql = 'SELECT * FROM food2018_v3_ll';
 // let selectUrl = `https://ederd.cartodb.com/api/v2/sql?format=geojson&q=${geoJsonSql}`;
 
+// don't do this, only for test purpose -> find another solution (hide api key in production)
+const apiKey = 'HvMRWvk-WCVhCmyDpNzEiw';
+
 // const selectSql = 'SELECT * FROM markers';
 const selectSql = 'SELECT cartodb_id, the_geom, name, description, category, contributor, TO_CHAR(date, \'YYYY-MM-DD\') AS date FROM markers';
 const selectUrl = `https://geomo.carto.com/api/v2/sql?format=geojson&q=${selectSql}`;
@@ -76,7 +79,7 @@ L.control.locate({
 }).addTo(map);
 L.Control.geocoder().addTo(map);
 
-const editor = new Editor('editModal', clusters);
+const editor = new Editor('editModal', clusters, apiKey);
 
 map.on(L.Draw.Event.CREATED, (e) => {
   // recreating a marker in order to add context menu

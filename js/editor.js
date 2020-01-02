@@ -1,13 +1,11 @@
-// don't do this, only for test purpose -> find another solution (hide api key in production)
-const apiKey = 'HvMRWvk-WCVhCmyDpNzEiw';
-
 class Editor {
 
-    constructor(modalId, drawingLayer) {
+    constructor(modalId, drawingLayer, apiKey) {
         this.modalId = modalId;
         this.drawingLayer = drawingLayer;
         this.mode = 'create';
         this.selectedLayer = null;
+        this.apiKey = apiKey;
     }
 
     UPDATE_MODE = 'update';
@@ -128,7 +126,7 @@ class Editor {
 
             $.ajax({
                 method: 'GET',
-                url: `https://geomo.carto.com/api/v2/sql?api_key=${apiKey}&q=${sql}`
+                url: `https://geomo.carto.com/api/v2/sql?api_key=${this.apiKey}&q=${sql}`
             }).done((response) => {
 
                 toastr.success(`Marker ${d.name} successfully created.`, `Marker ${d.name}`);
@@ -153,14 +151,14 @@ class Editor {
 
             $.ajax({
                 method: 'GET',
-                url: `https://geomo.carto.com/api/v2/sql?api_key=${apiKey}&q=${sql}`
+                url: `https://geomo.carto.com/api/v2/sql?api_key=${this.apiKey}&q=${sql}`
             }).done((response) => {
                 toastr.success(`Marker ${d.name} successfully updated.`, `Marker ${d.name}`);
             });
 
         }
 
-        this.selectedLayer.bindTooltip(this.selectedLayer.feature.properties.name, {
+        this.selectedLayer.bindTooltip(`<b>${this.selectedLayer.feature.properties.name}</b>`, {
             direction: 'top',
             offset: L.point(-2, -17)
         });
@@ -174,7 +172,7 @@ class Editor {
 
         const d = this._getSqlPreparedData(this.selectedLayer);
         const sql = `DELETE FROM markers WHERE cartodb_id = ${d.id}`;
-        const url = `https://geomo.carto.com/api/v2/sql?api_key=${apiKey}&q=${sql}`;
+        const url = `https://geomo.carto.com/api/v2/sql?api_key=${this.apiKey}&q=${sql}`;
         $.ajax({
             method: 'GET',
             url: url
