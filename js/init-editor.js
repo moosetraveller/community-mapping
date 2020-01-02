@@ -5,32 +5,31 @@ const selectSql = 'SELECT * FROM markers';
 const selectUrl = `https://geomo.carto.com/api/v2/sql?format=geojson&q=${selectSql}`;
 
 let cartodb = L.tileLayer.provider('CartoDB.Positron');
-// let osm = L.tileLayer.provider('OpenStreetMap.Mapnik');
-// let cartodb = L.tileLayer.provider('CartoDB.Voyager');
 
-let drawingLayer = new L.FeatureGroup();
+// let drawingLayer = new L.FeatureGroup();
+let clusters = L.markerClusterGroup({});
+// https://support.flaticon.com/hc/en-us/articles/207248209-How-I-must-insert-the-attribution-
+clusters.getAttribution = () => 'Icons made by <a href="https://www.flaticon.com/authors/vectors-market" title="Vectors Market">Vectors Market</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>';
 
 let map = L.map('map', {
   center: [44.8825, -65.163889],
   zoom: 10,
-  layers: [cartodb, drawingLayer]
+  layers: [cartodb, clusters]
 });
 
-let baseLayers = {
-  'Basemap': cartodb,
-  // 'Open Street Map': osm,
-  // 'CartoDB Voyager': cartodb
-};
+map.attributionControl.setPrefix('<a href="https://www.nscc.ca/explorenscc/campuses/cogs/" target="_blank">COGS</a>/<a href="https://www.geomo.ch" target="_blank">Thomas Zuberbühler</a>');
 
-let layers = {
-  'Markers': drawingLayer
-};
+// let baseLayers = {
+//   'Basemap': cartodb
+// };
+// let layers = {
+//   'Markers': drawingLayer
+// };
+// let layerProperties = {
+//   collapsed: false
+// };
+// L.control.layers(baseLayers, layers, layerProperties).addTo(map);
 
-let layerProperties = {
-  collapsed: false
-};
-
-L.control.layers(baseLayers, layers, layerProperties).addTo(map);
 L.control.scale().addTo(map);
 
 map.addControl(new L.Control.Draw({
@@ -50,7 +49,7 @@ L.control.locate({
 }).addTo(map);
 L.Control.geocoder().addTo(map);
 
-const editor = new Editor('editModal', drawingLayer);
+const editor = new Editor('editModal', clusters);
 
 map.on(L.Draw.Event.CREATED, e => {
   editor.startCreateFeature(e.layer);
@@ -73,7 +72,7 @@ $.getJSON(selectUrl, data => {
       }
       return L.marker(latLong);
     }
-  }).addTo(drawingLayer);
+  }).addTo(clusters);
 
   editor.setAlternativeDrawingLayer(geoJsonLayer);
 

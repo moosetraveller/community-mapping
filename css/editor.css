@@ -8,3 +8,11 @@ body,
 .map {
     height: 100%;
 }
+
+.leaflet-control-layers, .leaflet-bar {
+    border-radius: 0 !important;
+}
+
+.leaflet-control-layers-expanded {
+    padding: 6px;
+}
