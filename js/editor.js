@@ -161,7 +161,8 @@ class Editor {
         }
 
         this.selectedLayer.bindTooltip(this.selectedLayer.feature.properties.name, {
-            direction: 'top'
+            direction: 'top',
+            offset: L.point(-2, -17)
         });
 
     }
