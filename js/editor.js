@@ -88,6 +88,7 @@ class Editor {
             category: layer.feature.properties.category,
             contributor: layer.feature.properties.contributor
         };
+        // escape single quotes
         data.name = data.name.replace('\'', '\'\'');
         data.description = data.description.replace('\'', '\'\'');
         data.contributor = data.contributor.replace('\'', '\'\'');
