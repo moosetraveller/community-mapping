@@ -45,7 +45,7 @@
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Edit Marker</h5>
+                    <h5 class="modal-title" id="editModalLabel">Create/Edit Community Asset</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -58,6 +58,9 @@
                                     <div class="form-group">
                                         <label for="name" class="col-form-label">Name</label>
                                         <input type="text" class="form-control" id="name">
+                                        <small id="nameHelpBlock" class="form-text text-muted">
+                                            What is your feature of interest? (required)
+                                        </small>
                                     </div>
                                 </div>
                                 <div class="col-lg">
@@ -72,6 +75,9 @@
                                             <option value="organizationOrAssociation">Organizations/Association</option>
                                             <option value="news">In the News</option>
                                         </select>
+                                        <small id="categoryHelpBlock" class="form-text text-muted">
+                                            What is the feature type/category? (required)
+                                        </small>
                                     </div>
                                 </div>
 
@@ -81,6 +87,9 @@
                                     <div class="form-group">
                                         <label for="description" class="col-form-label">Description</label>
                                         <textarea class="form-control" id="description"></textarea>
+                                        <small id="descriptionHelpBlock" class="form-text text-muted">
+                                            Provide a brief overview of your feature of interest.
+                                        </small>
                                     </div>
                                 </div>
                             </div>
@@ -89,12 +98,18 @@
                                     <div class="form-group">
                                         <label for="contributor" class="col-form-label">Contributor</label>
                                         <input type="text" class="form-control" id="contributor">
+                                        <small id="contributorHelpBlock" class="form-text text-muted">
+                                            Provide your name. (required)
+                                        </small>
                                     </div>
                                 </div>
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="date" class="col-form-label">Date</label>
                                         <input type="date" class="form-control" id="date">
+                                        <small id="dateHelpBlock" class="form-text text-muted">
+                                            Provide a date of the event, occurence or solution found. (required)
+                                        </small>
                                     </div>
                                 </div>
                             </div>

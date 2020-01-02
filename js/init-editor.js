@@ -11,7 +11,7 @@ let cartodb = L.tileLayer.provider('CartoDB.Positron');
 let clusters = L.markerClusterGroup({
   showCoverageOnHover: false
 });
-// https://support.flaticon.com/hc/en-us/articles/207248209-How-I-must-insert-the-attribution-
+// icon attribution
 clusters.getAttribution = () => 'Icons made by <a href="https://www.flaticon.com/authors/vectors-market" title="Vectors Market">Vectors Market</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>';
 
 let map = L.map('map', {
@@ -19,19 +19,7 @@ let map = L.map('map', {
   zoom: 10,
   layers: [cartodb, clusters]
 });
-
 map.attributionControl.setPrefix('<a href="https://www.nscc.ca/explorenscc/campuses/cogs/" target="_blank">COGS</a>/<a href="https://www.geomo.ch" target="_blank">Thomas Zuberbühler</a>');
-
-// let baseLayers = {
-//   'Basemap': cartodb
-// };
-// let layers = {
-//   'Markers': drawingLayer
-// };
-// let layerProperties = {
-//   collapsed: false
-// };
-// L.control.layers(baseLayers, layers, layerProperties).addTo(map);
 
 L.control.scale().addTo(map);
 
