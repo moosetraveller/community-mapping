@@ -1,11 +1,12 @@
 class Editor {
 
-    constructor(modalId, drawingLayer, apiKey) {
+    constructor(modalId, drawingLayer, apiKey, apiUrl) {
         this.modalId = modalId;
         this.drawingLayer = drawingLayer;
         this.mode = 'create';
         this.selectedLayer = null;
         this.apiKey = apiKey;
+        this.apiUrl = apiUrl;
     }
 
     UPDATE_MODE = 'update';
@@ -126,7 +127,7 @@ class Editor {
 
             $.ajax({
                 method: 'GET',
-                url: `https://geomo.carto.com/api/v2/sql?api_key=${this.apiKey}&q=${sql}`
+                url: `${this.apiUrl}?api_key=${this.apiKey}&q=${sql}`
             }).done((response) => {
 
                 toastr.success(`Marker ${d.name} successfully created.`, `Marker ${d.name}`);
@@ -135,7 +136,7 @@ class Editor {
                 sql = `SELECT * FROM markers WHERE the_geom = ${d.geometryGeneratorFn} ORDER BY cartodb_id DESC`;
                 $.ajax({
                     method: 'GET',
-                    url: `https://geomo.carto.com/api/v2/sql?format=geojson&q=${sql}`
+                    url: `${this.apiUrl}?format=geojson&q=${sql}`
                 }).done((response) => {
                     const id = response.features[0].properties.cartodb_id;
                     this.selectedLayer.feature.properties.cartodb_id = id;
@@ -151,7 +152,7 @@ class Editor {
 
             $.ajax({
                 method: 'GET',
-                url: `https://geomo.carto.com/api/v2/sql?api_key=${this.apiKey}&q=${sql}`
+                url: `${this.apiUrl}?api_key=${this.apiKey}&q=${sql}`
             }).done((response) => {
                 toastr.success(`Marker ${d.name} successfully updated.`, `Marker ${d.name}`);
             });
@@ -172,7 +173,7 @@ class Editor {
 
         const d = this._getSqlPreparedData(this.selectedLayer);
         const sql = `DELETE FROM markers WHERE cartodb_id = ${d.id}`;
-        const url = `https://geomo.carto.com/api/v2/sql?api_key=${this.apiKey}&q=${sql}`;
+        const url = `${this.apiUrl}?api_key=${this.apiKey}&q=${sql}`;
         $.ajax({
             method: 'GET',
             url: url
