@@ -24,10 +24,22 @@ let AssetIcon = L.Icon.extend({
 });
 
 const markerIcons = {
-    solution: new AssetIcon({ iconUrl: './img/lightbulb.svg' }),
-    problem: new AssetIcon({ iconUrl: './img/warning.svg' }),
-    currentEvent: new AssetIcon({ iconUrl: './img/calendar.svg' }),
-    pastEvent: new AssetIcon({ iconUrl: './img/checklist.svg' }),
-    organizationOrAssociation: new AssetIcon({ iconUrl: './img/diagram.svg' }),
-    news: new AssetIcon({ iconUrl: './img/chat.svg' })
+    solution: new AssetIcon({
+        iconUrl: './img/lightbulb.svg'
+    }),
+    problem: new AssetIcon({
+        iconUrl: './img/warning.svg'
+    }),
+    currentEvent: new AssetIcon({
+        iconUrl: './img/calendar.svg'
+    }),
+    pastEvent: new AssetIcon({
+        iconUrl: './img/checklist.svg'
+    }),
+    organizationOrAssociation: new AssetIcon({
+        iconUrl: './img/diagram.svg'
+    }),
+    news: new AssetIcon({
+        iconUrl: './img/chat.svg'
+    })
 };

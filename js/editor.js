@@ -160,7 +160,9 @@ class Editor {
 
         }
 
-        this.selectedLayer.bindTooltip(this.selectedLayer.feature.properties.name);
+        this.selectedLayer.bindTooltip(this.selectedLayer.feature.properties.name, {
+            direction: 'top'
+        });
 
     }
 
