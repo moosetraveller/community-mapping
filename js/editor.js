@@ -1,16 +1,18 @@
 class Editor {
 
     constructor(modalId, drawingLayer, apiKey, apiUrl) {
+        
         this.modalId = modalId;
         this.drawingLayer = drawingLayer;
         this.mode = 'create';
         this.selectedLayer = null;
         this.apiKey = apiKey;
         this.apiUrl = apiUrl;
-    }
 
-    UPDATE_MODE = 'update';
-    CREATE_MODE = 'create';
+        this.UPDATE_MODE = 'update';
+        this.CREATE_MODE = 'create';
+
+    }
 
     setAlternativeDrawingLayer(alternativeDrawingLayer) {
         this.alternativeDrawingLayer = alternativeDrawingLayer;
