@@ -19,7 +19,7 @@ class Editor {
 
     openEditModal() {
         $(`#${this.modalId} .btn-danger`).css('display', this.mode == this.UPDATE_MODE ? 'block' : 'none')
-        this.updateModal();
+        this._updateModal();
         $(`#${this.modalId}`).modal('show');
     }
 
@@ -50,7 +50,7 @@ class Editor {
 
     }
 
-    updateModal() {
+    _updateModal() {
 
         // reset input fields
         $(`#${this.modalId} #editFields .form-control`).each((_, input) => {
@@ -75,19 +75,23 @@ class Editor {
 
     }
 
-    getSelectedLayerData() {
-        const lat = this.selectedLayer._latlng.lat;
-        const lng = this.selectedLayer._latlng.lng;
-        return {
+    _getSqlPreparedData(layer) {
+        const lat = layer._latlng.lat;
+        const lng = layer._latlng.lng;
+        let data = {
             lat: lat,
             lng: lng,
             geometryGeneratorFn: `ST_GeomFromText('POINT(${lng} ${lat})', 4326)`,
-            id: this.selectedLayer.feature.properties.cartodb_id,
-            name: this.selectedLayer.feature.properties.name,
-            description: this.selectedLayer.feature.properties.description,
-            category: this.selectedLayer.feature.properties.category,
-            contributor: this.selectedLayer.feature.properties.contributor
-        }
+            id: layer.feature.properties.cartodb_id,
+            name: layer.feature.properties.name,
+            description: layer.feature.properties.description,
+            category: layer.feature.properties.category,
+            contributor: layer.feature.properties.contributor
+        };
+        data.name = data.name.replace('\'', '\'\'');
+        data.description = data.description.replace('\'', '\'\'');
+        data.contributor = data.contributor.replace('\'', '\'\'');
+        return data;
     }
 
     save() {
@@ -96,8 +100,9 @@ class Editor {
 
         $(`#${this.modalId}`).modal('hide');
 
-        const d = this.getSelectedLayerData();
-        let url = ""
+        const d = this._getSqlPreparedData(this.selectedLayer);
+
+        this.selectedLayer.setIcon(markerIcons[d.category]);
 
         if (this.mode == this.CREATE_MODE) {
 
@@ -150,7 +155,7 @@ class Editor {
         this.drawingLayer.removeLayer(this.selectedLayer);
         this.alternativeDrawingLayer.removeLayer(this.selectedLayer);
 
-        const d = this.getSelectedLayerData();
+        const d = this._getSqlPreparedData(this.selectedLayer);
         const sql = `DELETE FROM markers WHERE cartodb_id = ${d.id}`;
         const url = `https://geomo.carto.com/api/v2/sql?api_key=${apiKey}&q=${sql}`;
         $.ajax({
