@@ -1,7 +1,8 @@
 // const geoJsonSql = 'SELECT * FROM food2018_v3_ll';
 // let selectUrl = `https://ederd.cartodb.com/api/v2/sql?format=geojson&q=${geoJsonSql}`;
 
-const selectSql = 'SELECT * FROM markers';
+// const selectSql = 'SELECT * FROM markers';
+const selectSql = 'SELECT cartodb_id, the_geom, name, description, category, contributor, TO_CHAR(date, \'YYYY-MM-DD\') AS date FROM markers';
 const selectUrl = `https://geomo.carto.com/api/v2/sql?format=geojson&q=${selectSql}`;
 
 let cartodb = L.tileLayer.provider('CartoDB.Positron');

@@ -61,11 +61,7 @@ class Editor {
         for (const key of Object.keys(this.selectedLayer.feature.properties)) {
             const input = $(`#${this.modalId} #editFields #${key}`);
             if (input.length > 0) {
-                let value = this.selectedLayer.feature.properties[key];
-                if (key == 'date') {
-                    value = this._getDate(new Date(value));
-                }
-                input.val(value);
+                input.val(this.selectedLayer.feature.properties[key]);
             }
         }
 
@@ -78,17 +74,21 @@ class Editor {
     }
 
     _getDate(date) {
-        // https://stackoverflow.com/a/31934378/42659
-        return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toJSON().slice(0, 10);
+        let month = date.getMonth() + 1;
+        if (month < 10) {
+            month = '0' + month;
+        }
+        let day = date.getDate();
+        if (day < 10) {
+            day = '0' + day;
+        }
+        return [date.getFullYear(), month, day].join('-');
     }
 
     _getSqlPreparedData(layer) {
-        const lat = layer._latlng.lat;
-        const lng = layer._latlng.lng;
         let data = {
-            lat: lat,
-            lng: lng,
-            geometryGeneratorFn: `ST_GeomFromText('POINT(${lng} ${lat})', 4326)`,
+            lat: layer._latlng.lat,
+            lng: layer._latlng.lng,
             id: layer.feature.properties.cartodb_id,
             name: layer.feature.properties.name,
             description: layer.feature.properties.description,
@@ -96,13 +96,14 @@ class Editor {
             contributor: layer.feature.properties.contributor,
             date: layer.feature.properties.date
         };
-        // escape single quotes
         data.name = data.name.replace('\'', '\'\'');
         data.description = data.description.replace('\'', '\'\'');
         data.contributor = data.contributor.replace('\'', '\'\'');
-        if (data.date == undefined) {
+        if (data.date == undefined || data.date.trim() == '') {
             data.date = this._getDate(new Date());
         }
+        data.dateFn = `TO_DATE('${data.date}', 'YYYY-MM-DD')`;
+        data.geometryGeneratorFn = `ST_GeomFromText('POINT(${data.lng} ${data.lat})', 4326)`;
         return data;
     }
 
@@ -113,6 +114,7 @@ class Editor {
         $(`#${this.modalId}`).modal('hide');
 
         const d = this._getSqlPreparedData(this.selectedLayer);
+        console.log(d);
 
         this.selectedLayer.setIcon(markerIcons[d.category]);
 
@@ -122,13 +124,13 @@ class Editor {
             this.selectedLayer.on('click', e => this.startUpdateFeature(e.target));
 
             let sql = `INSERT INTO markers (the_geom, name, description, category, contributor, date) ` +
-                `VALUES (${d.geometryGeneratorFn}, '${d.name}', '${d.description}', '${d.category}', '${d.contributor}', TO_DATE('${d.date}', 'YYYY-MM-DD'))`;
+                `VALUES (${d.geometryGeneratorFn}, '${d.name}', '${d.description}', '${d.category}', '${d.contributor}', ${d.dateFn})`;
 
             $.ajax({
                 method: 'GET',
                 url: `https://geomo.carto.com/api/v2/sql?api_key=${apiKey}&q=${sql}`
             }).done((response) => {
-                
+
                 toastr.success(`Marker ${d.name} successfully created.`, `Marker ${d.name}`);
 
                 // get cartodb_id from latest created marker at given position
@@ -147,7 +149,7 @@ class Editor {
         else {
 
             const sql = `UPDATE markers SET the_geom = ${d.geometryGeneratorFn}, name = '${d.name}', description = '${d.description}', ` +
-                `category = '${d.category}', contributor = '${d.contributor}', date = TO_DATE('${d.date}', 'YYYY-MM-DD') WHERE cartodb_id = ${d.id}`;
+                `category = '${d.category}', contributor = '${d.contributor}', date = ${d.dateFn} WHERE cartodb_id = ${d.id}`;
 
             $.ajax({
                 method: 'GET',
