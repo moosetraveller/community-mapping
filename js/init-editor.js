@@ -8,6 +8,15 @@ const selectUrl = `https://geomo.carto.com/api/v2/sql?format=geojson&q=${selectS
 let cartodb = L.tileLayer.provider('CartoDB.Positron');
 let cartodbMinimap = L.tileLayer.provider('CartoDB.Positron');
 
+// let geonames = L.tileLayer.wms('https://nsgiwa.novascotia.ca/arcgis/services/BASE/BASE_NS_GeoNAMES_pnt_UT83/MapServer/WmsServer?', {
+//   layers: 'Municipalities',
+//   format: 'png8',
+//   transparent: true,
+//   attribution: "GeoNova",
+//   maxZoom: 50,
+//   minZoom: 3,
+// });
+
 // let drawingLayer = new L.FeatureGroup();
 let clusters = L.markerClusterGroup({
   showCoverageOnHover: false
