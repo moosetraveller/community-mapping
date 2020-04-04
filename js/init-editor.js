@@ -1,7 +1,7 @@
 // don't do this, only for test purpose 
 // -> find another solution (hide api key in production, eg. using a proxy or at least have a 
 //    proper authentication to minimize the risk)
-const apiKey = 'HvMRWvk-WCVhCmyDpNzEiw';
+const apiKey = 'YOUR_APIKEY';
 // this could be a proxy url which forwards to CARTO whereas the real api key will be added by the proxy
 const apiUrl = `https://geomo.carto.com/api/v2/sql`; 
 
